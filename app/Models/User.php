@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -30,9 +31,20 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
-        public function getJWTIdentifier()
+
+    public function getJWTIdentifier()
     {
         return $this->getKey();
+    }
+
+    public function cart(): HasOne
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function wishlist(): HasOne
+    {
+        return $this->hasOne(Wishlist::class);
     }
 
     public function getJWTCustomClaims(): array
