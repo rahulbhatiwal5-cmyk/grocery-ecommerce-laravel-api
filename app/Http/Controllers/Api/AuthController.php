@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -33,6 +33,7 @@ class AuthController extends Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ], 201);
     }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -54,12 +55,14 @@ class AuthController extends Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
+
     public function me()
     {
         return response()->json([
             'user' => auth('api')->user(),
         ]);
     }
+
     public function logout()
     {
         auth('api')->logout();
@@ -68,9 +71,14 @@ class AuthController extends Controller
             'message' => 'Logout successful.',
         ]);
     }
+
     public function refresh()
     {
-        $token = auth('api')->refresh();
+        try {
+            $token = auth('api')->refresh();
+        } catch (JWTException $exception) {
+            return response()->json(['message' => 'Invalid or expired token.'], 401);
+        }
 
         return response()->json([
             'message' => 'Token refreshed successfully.',
@@ -79,4 +87,4 @@ class AuthController extends Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
-    }
+}
