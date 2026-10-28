@@ -40,6 +40,9 @@
             <div class="card border-0 shadow-sm"><div class="card-body">
                 <h2 class="h6">Status and payment</h2>
                 <p class="mb-2"><span class="text-secondary">Payment:</span> <span class="text-capitalize">{{ $order->payment_method }} · {{ $order->payment_status }}</span></p>
+                @if ($order->paymentTransaction?->provider_payment_id)
+                    <p class="mb-2 small"><span class="text-secondary">Razorpay payment ID:</span> {{ $order->paymentTransaction->provider_payment_id }}</p>
+                @endif
                 <form action="{{ route('admin.orders.status.update', $order) }}" method="POST">
                     @csrf @method('PATCH')
                     <label class="form-label" for="status">Order status</label>

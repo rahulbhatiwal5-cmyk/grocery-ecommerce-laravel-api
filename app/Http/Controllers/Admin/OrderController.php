@@ -20,7 +20,7 @@ class OrderController extends Controller
             'status' => ['nullable', 'string', Rule::in(Order::STATUSES)],
         ]);
         $orders = Order::query()
-            ->with('user:id,name,email')
+            ->with(['user:id,name,email', 'paymentTransaction'])
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($searchQuery) use ($search): void {
                     $searchQuery->where('id', 'like', '%'.$search.'%')
@@ -41,7 +41,7 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load(['user:id,name,email', 'items']);
+        $order->load(['user:id,name,email', 'items', 'paymentTransaction']);
 
         return view('admin.orders.show', compact('order'));
     }

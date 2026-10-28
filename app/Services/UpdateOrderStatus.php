@@ -20,7 +20,7 @@ class UpdateOrderStatus
         DB::transaction(function () use ($order, $status): void {
             $lockedOrder = Order::query()
                 ->whereKey($order->getKey())
-                ->with('items')
+                ->with(['items', 'paymentTransaction'])
                 ->lockForUpdate()
                 ->firstOrFail();
 
@@ -55,6 +55,15 @@ class UpdateOrderStatus
                     if ($product) {
                         $product->increment('stock', $item->quantity);
                     }
+                }
+
+                if ($lockedOrder->payment_method === 'razorpay' && $lockedOrder->paymentTransaction?->status === 'pending') {
+                    $lockedOrder->paymentTransaction->update([
+                        'status' => 'failed',
+                        'failure_code' => 'admin_cancelled',
+                        'failure_message' => 'The order was cancelled before online payment was finalized.',
+                    ]);
+                    $lockedOrder->update(['payment_status' => 'failed']);
                 }
             }
 

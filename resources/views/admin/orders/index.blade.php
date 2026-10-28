@@ -25,7 +25,7 @@
                             <td class="fw-semibold">#{{ $order->id }}</td>
                             <td><div>{{ $order->user->name }}</div><small class="text-secondary">{{ $order->user->email }}</small></td>
                             <td>₹{{ number_format((float) $order->grand_total, 2) }}</td>
-                            <td><div class="text-uppercase">{{ $order->payment_method }}</div><small class="text-capitalize text-secondary">{{ $order->payment_status }}</small></td>
+                            <td><div class="text-uppercase">{{ $order->payment_method }}</div><small class="text-capitalize text-secondary">{{ $order->payment_status }}</small>@if ($order->paymentTransaction?->provider_payment_id)<small class="d-block text-secondary">{{ $order->paymentTransaction->provider_payment_id }}</small>@endif</td>
                             <td><span class="badge text-bg-light border text-capitalize">{{ str_replace('_', ' ', $order->status) }}</span></td>
                             <td>{{ $order->placed_at->format('d M Y, h:i A') }}</td>
                             <td><a class="btn btn-sm btn-outline-success" href="{{ route('admin.orders.show', $order) }}">View</a></td>

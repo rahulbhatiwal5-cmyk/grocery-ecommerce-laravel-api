@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\RazorpayPaymentController;
 use App\Http\Controllers\Api\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,7 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
 Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('throttle:60,1');
+Route::post('/webhooks/razorpay', [RazorpayPaymentController::class, 'webhook']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/addresses', [AddressController::class, 'index']);
     Route::post('/addresses', [AddressController::class, 'store']);
@@ -42,6 +44,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{order}', [OrderController::class, 'show'])->whereNumber('order');
+    Route::post('/payments/razorpay/create-order', [RazorpayPaymentController::class, 'createOrder']);
+    Route::post('/payments/razorpay/verify', [RazorpayPaymentController::class, 'verify']);
+    Route::post('/payments/razorpay/fail', [RazorpayPaymentController::class, 'fail']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 

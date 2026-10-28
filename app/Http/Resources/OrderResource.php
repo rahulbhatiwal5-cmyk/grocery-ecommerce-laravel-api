@@ -16,6 +16,7 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'payment_status' => $this->payment_status,
             'payment_method' => $this->payment_method,
+            'payment_id' => $this->whenLoaded('paymentTransaction', fn () => $this->paymentTransaction?->provider_payment_id),
             'subtotal' => (float) $this->subtotal,
             'delivery_charge' => (float) $this->delivery_charge,
             'grand_total' => (float) $this->grand_total,
